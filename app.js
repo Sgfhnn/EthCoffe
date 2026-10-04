@@ -21,6 +21,11 @@ async function init(){
     LABELS=await fetch("model/labels.json").then(r=>{if(!r.ok)throw new Error("Model labels unavailable");return r.json()});
     if(!Array.isArray(LABELS)||LABELS.length!==4||new Set(LABELS).size!==4||LABELS.some(k=>typeof k!=="string"||!ADV[k]))throw new Error("Model labels do not match reviewed advice");
     session=await ort.InferenceSession.create("model/model.onnx",{executionProviders:["wasm"]});
+    // Guard against a stale cached model paired with fresh labels: a 5-class model
+    // would map every prediction to a label that does not exist, and every photo
+    // would silently read "Uncertain".
+    const out=session.outputNames[0].shape.slice(-1)[0];
+    if(typeof out==="number"&&out!==LABELS.length)throw new Error("Cached model has "+out+" classes but labels.json has "+LABELS.length+". Clear this site's cache and reload.");
     $("take").hidden=false;setStatus("");ui();
   }
   catch(e){setStatus("err");console.error(e)}

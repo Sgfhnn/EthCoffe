@@ -1,4 +1,5 @@
-const C="coffee-v6",CORE=["./","index.html","app.js","i18n.json","advice.json","manifest.json","icon-192.png","icon-512.png","ort/ort.min.js","ort/ort-wasm-simd-threaded.mjs","ort/ort-wasm-simd-threaded.wasm","model/model.onnx","model/labels.json"],
+const C="coffee-v7",NET_FIRST=["model/model.onnx","model/labels.json"],
+CORE=["./","index.html","app.js","i18n.json","advice.json","manifest.json","icon-192.png","icon-512.png","ort/ort.min.js","ort/ort-wasm-simd-threaded.mjs","ort/ort-wasm-simd-threaded.wasm","model/model.onnx","model/labels.json"],
 AUD=["Leaf_rust","Cerscospora","Phoma","Healthy","Uncertain"].flatMap(k=>["am","om","en"].map(l=>`audio/${k}_${l}.mp3`));
 self.addEventListener("install",e=>{e.waitUntil((async()=>{
   const cache=await caches.open(C);
@@ -15,6 +16,17 @@ self.addEventListener("activate",e=>{e.waitUntil((async()=>{
 })())});
 self.addEventListener("fetch",e=>{
   if(e.request.method!=="GET"||new URL(e.request.url).origin!==self.location.origin)return;
+  const path=new URL(e.request.url).pathname;
+  // The model and its label list must always be a matched pair. Serving the model
+  // from cache while the labels come from network (or vice versa) silently breaks
+  // every prediction, so always revalidate these two.
+  if(NET_FIRST.some(p=>path.endsWith(p))){
+    e.respondWith(fetch(e.request).then(response=>{
+      if(response.ok){const copy=response.clone();e.waitUntil(caches.open(C).then(cache=>cache.put(e.request,copy)))}
+      return response;
+    }).catch(()=>caches.match(e.request)));
+    return;
+  }
   e.respondWith(caches.match(e.request).then(hit=>hit||fetch(e.request).then(response=>{
     if(response.ok){const copy=response.clone();e.waitUntil(caches.open(C).then(cache=>cache.put(e.request,copy)))}
     return response;
