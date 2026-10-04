@@ -29,7 +29,7 @@ Thresholds, preprocessing and the optional debug output are in `app.js`. Keep `m
 
 ## Credits and provenance
 
-- Ethiopian coffee-leaf training dataset: Kaggle, reported by the project owner as CC0 1.0. **Add the exact dataset title and URL before public submission**; the source is not recorded in this repository.
+- [Ethiopian Coffee Leaf Disease dataset](https://www.kaggle.com/datasets/biniyamyoseph/ethiopian-coffee-leaf-disease/data) (Kaggle; reported by the project owner as CC0 1.0): source of the Ethiopian training images shown in the training and test charts above.
 - Huyt, [arabica-coffee-leaf-disease-efficientnet-b0](https://huggingface.co/Huyt/arabica-coffee-leaf-disease-efficientnet-b0) (CC BY 4.0): public baseline evaluated during development, not the deployed Ethiopian model.
 - Jepkoech et al. (2021), *Arabica coffee leaf images dataset for coffee leaf disease detection and classification*, Data in Brief 36:107142 (JMuBEN), the dataset associated with that public baseline.
 - [onnxruntime-web](https://github.com/microsoft/onnxruntime) (MIT).
