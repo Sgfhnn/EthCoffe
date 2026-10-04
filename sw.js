@@ -1,4 +1,4 @@
-const C="coffee-v5",CORE=["./","index.html","app.js","i18n.json","advice.json","manifest.json","icon-192.png","icon-512.png","ort/ort.min.js","ort/ort-wasm-simd-threaded.mjs","ort/ort-wasm-simd-threaded.wasm","model/model.onnx","model/labels.json"],
+const C="coffee-v6",CORE=["./","index.html","app.js","i18n.json","advice.json","manifest.json","icon-192.png","icon-512.png","ort/ort.min.js","ort/ort-wasm-simd-threaded.mjs","ort/ort-wasm-simd-threaded.wasm","model/model.onnx","model/labels.json"],
 AUD=["Leaf_rust","Cerscospora","Phoma","Healthy","Uncertain"].flatMap(k=>["am","om","en"].map(l=>`audio/${k}_${l}.mp3`));
 self.addEventListener("install",e=>{e.waitUntil((async()=>{
   const cache=await caches.open(C);

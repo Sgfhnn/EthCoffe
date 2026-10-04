@@ -52,3 +52,18 @@ test('Uncertain saves a photo but never shares the hidden guess', async () => {
   assert.match(copied, /Not sure/);
   assert.doesNotMatch(copied, /Leaf_rust|91%/);
 });
+
+test('startup errors follow the selected language', () => {
+  const elements = new Proxy({}, {get(target, key) {return target[key] ??= {textContent: ''}}});
+  const context = vm.createContext({
+    localStorage: {getItem: () => 'am'},
+    document: {getElementById: id => elements[id], documentElement: {}},
+    navigator: {onLine: true},
+    translations: JSON.parse(read('i18n.json'))
+  });
+  vm.runInContext(read('app.js').replace(/init\(\);\s*$/, ''), context);
+  vm.runInContext('I18N=translations;setStatus("err");lang="en";ui()', context);
+  assert.equal(elements.status.textContent, context.translations.en.err);
+  vm.runInContext('lang="om";ui()', context);
+  assert.equal(elements.status.textContent, context.translations.om.err);
+});
