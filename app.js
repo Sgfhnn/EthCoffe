@@ -24,7 +24,8 @@ async function init(){
     // Guard against a stale cached model paired with fresh labels: a 5-class model
     // would map every prediction to a label that does not exist, and every photo
     // would silently read "Uncertain".
-    const out=session.outputNames[0].shape.slice(-1)[0];
+    const meta=session.outputMetadata&&session.outputMetadata[0];
+    const out=meta&&meta.shape?meta.shape[meta.shape.length-1]:undefined;
     if(typeof out==="number"&&out!==LABELS.length)throw new Error("Cached model has "+out+" classes but labels.json has "+LABELS.length+". Clear this site's cache and reload.");
     $("take").hidden=false;setStatus("");ui();
   }
